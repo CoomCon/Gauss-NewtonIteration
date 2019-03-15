@@ -1,5 +1,5 @@
 format long
-% data = load('sixpoint12152119.txt');
+% data = load('sixpoint12152119.txt'
 data = load('sixpoint12152124.txt');
 
 x = data(:,1);
