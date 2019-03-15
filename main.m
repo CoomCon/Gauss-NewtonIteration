@@ -26,8 +26,6 @@ end
 xk = x_0';
 digits(8);
 while(1)
-%     DF = subs(DfT,{'x0','y0','z0','l','m','n'},{xk(1),xk(2),xk(3),xk(4),xk(5),xk(6)});
-%     FF = subs(F,{'x0','y0','z0','l','m','n'},{xk(1),xk(2),xk(3),xk(4),xk(5),xk(6)});
     DF = subs(DfT,{'x0','y0','z0','theta','phi'},{xk(1),xk(2),xk(3),xk(4),xk(5)});
     FF = subs(F,{'x0','y0','z0','theta','phi'},{xk(1),xk(2),xk(3),xk(4),xk(5)});
     FFF = double(vpa(FF));
