@@ -1,4 +1,4 @@
-% GaussNewton 《一个求解非线性最小二乘问题的新方法》——陈淑铭
+% GaussNewTon
 format long
 data = load('sixpoint12152119.txt');
 % Levenberg-Marquardt
@@ -16,6 +16,7 @@ dz = data(:,3)-data(1,3);
 dxyz = [dx,dy,dz];
 DfT=sym(zeros(length(x_0),length(x)));
 F=DfT(:,1);
+% 构造非线性方程组
 for i=1:length(x)
     [df,f] = dfunc( dxyz(i,1),dxyz(i,2),dxyz(i,3),data(i,4),R );
     %符号计算中 A’求解的是Hermit转置 A.'求解的是转置
@@ -29,11 +30,11 @@ while(1)
     FF = subs(F,{'x0','y0','z0','theta','phi'},{xk(1),xk(2),xk(3),xk(4),xk(5)});
     FFF = double(vpa(FF));
     DFF = double(vpa(DF));
-%     Gx中添加阻尼项u*I
+%  *DFF 还是 *xk?
     Gx = (inv(DFF*DFF'))*DFF;
     xk1 = xk-Gx*FFF;
     xk1
-    if(abs(xk1-xk)<1e-3)
+    if(abs(sum(xk1-xk))<1e-3)
         break;
     else
         xk=xk1;
