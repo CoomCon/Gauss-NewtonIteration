@@ -30,7 +30,7 @@ while(1)
     FF = subs(F,{'x0','y0','z0','theta','phi'},{xk(1),xk(2),xk(3),xk(4),xk(5)});
     FFF = double(vpa(FF));
     DFF = double(vpa(DF));
-%  *DFF 还是 *xk?
+%   这里是乘以偏差 此处是与零的偏差
     Gx = (inv(DFF*DFF'))*DFF;
     xk1 = xk-Gx*FFF;
     xk1
