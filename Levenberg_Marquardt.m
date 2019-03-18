@@ -1,8 +1,8 @@
 % Levenberg_Marquardt
 format long
-% data = load('sixpoint12152119.txt');
- load('point_randd.mat');
- data = daxyz;
+data = load('sixpoint12152119.txt');
+% load('point_randd.mat');
+% data = daxyz;
 % Levenberg-Marquardt
 x = data(:,1);
 y = data(:,2);
@@ -10,7 +10,7 @@ z = data(:,3);
 d = data(:,4);
 R = 50.7698;
 
-x_0 = [0,0,0,0,-pi/4];%迭代初值
+x_0 = [0,0,0,0,-pi];%迭代初值
 
 dx = data(:,1)-data(1,1);
 dy = data(:,2)-data(1,2);
@@ -19,7 +19,7 @@ dxyz = [dx,dy,dz];
 DfT=sym(zeros(length(x_0),length(x)));
 F=DfT(:,1);
 % 迭代因子初始化 以及迭代因子改变量
-mu = 2;
+mu = 20;
 v = 1.5;
 IDFF = eye(5);
 %
@@ -32,44 +32,29 @@ end
 xk = x_0';
 digits(8);
 % 第二个才能循环 第一组数据
-DF = subs(DfT,{'x0','y0','z0','theta','phi'},{xk(1),xk(2),xk(3),xk(4),xk(5)});
-FF = subs(F,{'x0','y0','z0','theta','phi'},{xk(1),xk(2),xk(3),xk(4),xk(5)});
-FFF = double(vpa(FF));
-DFF = double(vpa(DF));
-Gx = (inv(DFF*DFF'+mu*IDFF))*DFF*FFF;
-xk1 = xk-Gx;
-preFFF = FFF; 
-if(abs(Gx)<1e-2)
-    break;
-else
-    xk=xk1;
-end
-% 开始循环
 while(1)
+    xk
     DF = subs(DfT,{'x0','y0','z0','theta','phi'},{xk(1),xk(2),xk(3),xk(4),xk(5)});
     FF = subs(F,{'x0','y0','z0','theta','phi'},{xk(1),xk(2),xk(3),xk(4),xk(5)});
     FFF = double(vpa(FF));
     DFF = double(vpa(DF));
-    %     Gx中添加阻尼项u*I
     Gx = (inv(DFF*DFF'+mu*IDFF))*DFF*FFF;
-    if(norm(abs(FFF))<=norm(abs(preFFF)))
-        xk1 = xk-Gx;
-        xk1
-    else
+    xk1 = xk-Gx;
+    % 此处多计算很多次
+    FF1 = subs(F,{'x0','y0','z0','theta','phi'},{xk1(1),xk1(2),xk1(3),xk1(4),xk1(5)});
+    FFF1 = double(vpa(FF1));
+    if(abs(FFF)<=abs(FFF1))
         mu = mu*v;
-    end
-
-    if(abs(Gx)<1e-3)
-        break;
     else
-        if(norm(abs(FFF))<=norm(abs(preFFF)))
-            preFFF = FFF;
-            xk=xk1;
-            mu = mu/v;
+        xk = xk1;
+        mu = mu/v;
+%         if(abs(DFF*FFF)<=1e-2)
+        if(abs(Gx)<=1e-2)
+            break;
         end
     end
-    
 end
+
 xk1
 theta=xk1(4);phi=xk1(5);
 l=sin(theta)*cos(phi)
