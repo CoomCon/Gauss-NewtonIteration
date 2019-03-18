@@ -1,6 +1,8 @@
 % Levenberg_Marquardt
 format long
-data = load('sixpoint12152119.txt');
+% data = load('sixpoint12152119.txt');
+ load('point_randd.mat');
+ data = daxyz;
 % Levenberg-Marquardt
 x = data(:,1);
 y = data(:,2);
@@ -8,7 +10,7 @@ z = data(:,3);
 d = data(:,4);
 R = 50.7698;
 
-x_0 = [0,0,0,0,-pi];%迭代初值
+x_0 = [0,0,0,0,-pi/4];%迭代初值
 
 dx = data(:,1)-data(1,1);
 dy = data(:,2)-data(1,2);
@@ -50,17 +52,17 @@ while(1)
     DFF = double(vpa(DF));
     %     Gx中添加阻尼项u*I
     Gx = (inv(DFF*DFF'+mu*IDFF))*DFF*FFF;
-    if(abs(FFF)<abs(preFFF))
+    if(norm(abs(FFF))<=norm(abs(preFFF)))
         xk1 = xk-Gx;
         xk1
     else
         mu = mu*v;
     end
 
-    if(abs(Gx)<1e-2)
+    if(abs(Gx)<1e-3)
         break;
     else
-        if(abs(FFF)<abs(preFFF))
+        if(norm(abs(FFF))<=norm(abs(preFFF)))
             preFFF = FFF;
             xk=xk1;
             mu = mu/v;
