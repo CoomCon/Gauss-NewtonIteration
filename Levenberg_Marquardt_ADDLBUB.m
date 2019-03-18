@@ -1,11 +1,16 @@
 % Levenberg_Marquardt
+% #######################
+% 设置x0 lb&ub 20190318
+% #######################
 format long
 data = load('sixpoint12152119.txt');
+%%
 % [l m n ] = [1 1 1]/sqrt(3)
 % [x0 y0 z0] = [30 20 10];
 % load('point_randd.mat');
 % data = daxyz;
-
+% 方向求解正确 但球心求解错误
+%%
 % Levenberg-Marquardt
 x = data(:,1);
 y = data(:,2);
@@ -13,10 +18,12 @@ z = data(:,3);
 d = data(:,4);
 R = 50.7698/2;
 
-x_0 = [0,0,0,0,-pi];%迭代初值
-% #######################
-% 设置x0 lb&ub 
-% #######################
+x_0 = [0,0,0,0,pi];%迭代初值
+
+lb=[-100 -100 -100 -pi 0]';
+ub=[100 100 100 pi pi]';
+% hb=[100 100 100 pi pi/2]';
+
 dx = data(:,1)-data(1,1);
 dy = data(:,2)-data(1,2);
 dz = data(:,3)-data(1,3);
@@ -45,6 +52,11 @@ while(1)
     DFF = double(vpa(DF));
     Gx = (inv(DFF*DFF'+mu*IDFF))*DFF*FFF;
     xk1 = xk-Gx;
+    if(find(xk1>ub))
+        xk1(find(xk1>ub))=ub(find(xk1>ub));
+    elseif(find(xk1<lb))
+            xk1(find(xk1<lb))=lb(find(xk1<lb));
+    end
     % 此处多计算很多次
     FF1 = subs(F,{'x0','y0','z0','theta','phi'},{xk1(1),xk1(2),xk1(3),xk1(4),xk1(5)});
     FFF1 = double(vpa(FF1));
